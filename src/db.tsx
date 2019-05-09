@@ -40,11 +40,11 @@ export const dataset = {
                     "12": "Hordaland",
                     "14": "Sogn og Fjordane",
                     "15": "Møre og Romsdal",
-                    "16": "Sør-Trøndelag (-2017)",
-                    "17": "Nord-Trøndelag (-2017)",
+                    "16": "Sør-Trøndelag",
+                    "17": "Nord-Trøndelag",
                     "18": "Nordland",
-                    "19": "Troms - Romsa",
-                    "20": "Finnmark - Finnmárku"
+                    "19": "Troms",
+                    "20": "Finnmark"
                 }
             },
             "link": {
