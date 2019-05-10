@@ -2,10 +2,11 @@
 import { jsx, css } from '@emotion/core'
 import React from 'react'
 import { dataset } from './../db'
+import Party from './Party/Party'
 
 
 
-interface IParty {
+export interface IParty {
     index: number
     name: string
     shortName: string
@@ -55,8 +56,10 @@ class Democracy extends React.Component<IProps> {
         }
     }
 
-    pCss = css`
+    partiesCss = css`
         padding: 5px;
+        display: flex;
+        flex-flow: row;
     `
 
     loadParties(): IParty[] {
@@ -97,7 +100,6 @@ class Democracy extends React.Component<IProps> {
         regions[0].votes.forEach(r => r.mandates = 0)
         regions.forEach(region => {
             region.votes = region.votes.map(v => { return { ...v, votes: v.votes / divisor } })
-            if (bar <= 0) region.mandates++
             for (let i = region.mandates; i > 0; i--) {
                 region.votes = region.votes.sort((a, b) => this.sainteLagueSort(a, b, divisor))
                 region.votes[0].mandates++
@@ -114,11 +116,13 @@ class Democracy extends React.Component<IProps> {
         let testParties: { party: IParty, mandates: number }[] = []
         const testValid = (tp: any) => {
             if (tp.mandates - tp.party.mandates < 0) {
-                eligibleParties.splice(eligibleParties.indexOf(tp.party))
+                console.log(tp)
+                eligibleParties.splice(eligibleParties.indexOf(tp.party), 1)
                 validLevelling = false
             }
         }
         while (!validLevelling) {
+            console.log(eligibleParties, totalMandates)
             testParties = eligibleParties.map(ep => { return { party: ep, mandates: 0 } })
             totalMandates = eligibleParties.reduce((acc, curr) => acc + curr.mandates, regions.length)
             for (let i = totalMandates; i > 0; i--) {
@@ -145,28 +149,30 @@ class Democracy extends React.Component<IProps> {
         const newRegions = this.loadRegions(newParties)
         this.calculateDelegates(newRegions, this.state.divisor, newBar)
         this.calculateLevellingMandates(newRegions, newParties, this.state.divisor, newBar)
-        this.setState({parties: newParties, regions: newRegions, bar: newBar})
+        this.setState({ parties: newParties, regions: newRegions, bar: newBar })
     }
 
     divisorChangedHandler = (e: any) => {
-        const newDivisor = e.target.value / 10 +1
-        console.log(newDivisor)
+        const newDivisor = e.target.value / 10 + 1
         const newParties = this.loadParties()
         const newRegions = this.loadRegions(newParties)
         this.calculateDelegates(newRegions, newDivisor, this.state.bar)
         this.calculateLevellingMandates(newRegions, newParties, newDivisor, this.state.bar)
-        this.setState({parties: newParties, regions: newRegions, divisor: newDivisor})
+        this.setState({ parties: newParties, regions: newRegions, divisor: newDivisor })
     }
 
 
 
     render() {
-        const parties = this.state.parties.filter(p => p.mandates > 0).sort((a, b) => b.mandates - a.mandates).map((p, i) => <p key={i} css={this.pCss}>{p.name} {p.mandates} </p>)
-        parties.push(<p key='sum' css={this.pCss}>Sum mandater {this.state.parties.reduce((acc, curr) => acc + curr.mandates, 0)} </p>)
+        const parties = this.state.parties.filter(p => p.mandates > 0).map((p, i) =>
+            <Party key={i} party={p} />)
+
         return <div>
             Sperregrense: <input type="range" min="0" max="10" value={this.state.bar * 100} onChange={this.barChangedHandler} /> {this.state.bar * 100}%<br />
             Første delingstall: <input type="range" min="0" max="10" value={Math.round((this.state.divisor - 1) * 10)} onChange={this.divisorChangedHandler} /> {this.state.divisor}<br />
-            {parties}
+            <div css={this.partiesCss} >
+                {parties}
+            </div>
         </div>
     }
 }
