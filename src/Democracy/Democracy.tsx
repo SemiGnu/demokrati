@@ -60,6 +60,7 @@ class Democracy extends React.Component<IProps> {
         padding: 5px;
         display: flex;
         flex-flow: row;
+        justify-content: space-between;
     `
 
     loadParties(): IParty[] {
@@ -168,11 +169,11 @@ class Democracy extends React.Component<IProps> {
             <Party key={i} party={p} />)
 
         return <div>
-            Sperregrense: <input type="range" min="0" max="10" value={this.state.bar * 100} onChange={this.barChangedHandler} /> {this.state.bar * 100}%<br />
-            Første delingstall: <input type="range" min="0" max="10" value={Math.round((this.state.divisor - 1) * 10)} onChange={this.divisorChangedHandler} /> {this.state.divisor}<br />
             <div css={this.partiesCss} >
                 {parties}
             </div>
+            Sperregrense: <input type="range" min="0" max="10" value={this.state.bar * 100} onChange={this.barChangedHandler} /> {Math.round(this.state.bar * 100)}%<br />
+            Første delingstall: <input type="range" min="0" max="10" value={Math.round((this.state.divisor - 1) * 10)} onChange={this.divisorChangedHandler} /> {this.state.divisor}<br />
         </div>
     }
 }
@@ -202,15 +203,15 @@ const initRegions = [
 ]
 
 const initParties = [
-    { name: 'Arbeiderpartiet', shortName: 'AP', votes: 800947, mandates: 0, color: '#888' },
-    { name: 'Høyre', shortName: 'H', votes: 732895, mandates: 0, color: '#888' },
-    { name: 'Fremskrittspartiet', shortName: 'FRP', votes: 444681, mandates: 0, color: '#888' },
-    { name: 'Senterpartiet', shortName: 'SP', votes: 302017, mandates: 0, color: '#888' },
-    { name: 'Sosialistisk Venstreparti', shortName: 'SV', votes: 176222, mandates: 0, color: '#888' },
-    { name: 'Venstre', shortName: 'V', votes: 127910, mandates: 0, color: '#888' },
-    { name: 'Kristelig Folkeparti', shortName: 'KRF', votes: 122797, mandates: 0, color: '#888' },
-    { name: 'Miljøpartiet De Grønne', shortName: 'MDG', votes: 94788, mandates: 0, color: '#888' },
-    { name: 'Rødt', shortName: 'R', votes: 70522, mandates: 0, color: '#888' },
+    { name: 'Arbeiderpartiet', shortName: 'AP', votes: 800947, mandates: 0, color: 'red' },
+    { name: 'Høyre', shortName: 'H', votes: 732895, mandates: 0, color: 'blue' },
+    { name: 'Fremskrittspartiet', shortName: 'FRP', votes: 444681, mandates: 0, color: 'navy' },
+    { name: 'Senterpartiet', shortName: 'SP', votes: 302017, mandates: 0, color: 'lime' },
+    { name: 'Sosialistisk Venstreparti', shortName: 'SV', votes: 176222, mandates: 0, color: 'magenta' },
+    { name: 'Venstre', shortName: 'V', votes: 127910, mandates: 0, color: 'darkgreen' },
+    { name: 'Kristelig Folkeparti', shortName: 'KRF', votes: 122797, mandates: 0, color: 'yellow' },
+    { name: 'Miljøpartiet De Grønne', shortName: 'MDG', votes: 94788, mandates: 0, color: 'green' },
+    { name: 'Rødt', shortName: 'R', votes: 70522, mandates: 0, color: 'darkred' },
     { name: 'Pensjonistpartiet', shortName: 'PP', votes: 12855, mandates: 0, color: '#888' },
     { name: 'Helsepartiet', shortName: 'HP', votes: 10337, mandates: 0, color: '#888' },
     { name: 'Partiet De Kristne', shortName: 'PDK', votes: 8700, mandates: 0, color: '#888' },

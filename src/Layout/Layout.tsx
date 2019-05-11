@@ -8,7 +8,7 @@ interface IProps {
 const containerCss = css`
     margin:auto;
     width:900px;
-    border: 1px solid red;
+    // border: 1px solid red;
 `
 
 const layout: React.FC<IProps> = (props) => {
