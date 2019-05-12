@@ -57,6 +57,48 @@ class Democracy extends React.Component<IProps> {
         }
     }
 
+    CONTROL_MAX_HEIGHT = "124px"
+
+    containerCss = css`
+        background-color: #ebebeb;
+        display: flex;
+        flex-flow: column;
+        
+    `
+    controlCss = css`
+        max-height:${this.CONTROL_MAX_HEIGHT};
+        position: fixed;
+        background-color: #ebebeb;
+        width: 100%;
+        bottom: 0;
+    `
+    pCss = css`
+        margin: 0;
+        padding: 10px;
+        font-weight: 700;
+        input {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 10px;
+            border-radius: 5px;
+            background: #808080;
+            outline: none;
+            -webkit-transition: .2s;
+            transition: opacity .2s;
+        }
+
+        input::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 12px;
+            background: #4ea0ed;
+            cursor: pointer;
+          }
+          
+    `
+
     partiesCss = css`
         padding: 5px;
         display: flex;
@@ -65,15 +107,22 @@ class Democracy extends React.Component<IProps> {
     `
 
     render() {
-        const parties = this.state.parties.filter(p => p.mandates > 0).map((p, i) =>
+        const parties = this.state.parties.filter(p => p.mandates > 0).sort((a, b) => a.index - b.index).map((p, i) =>
             <Party key={i} party={p} />)
 
-        return <div style={{backgroundColor: "#ebebeb"}}>
+        return <div css={this.containerCss}>
             <div css={this.partiesCss} >
                 {parties}
+                <div style={{height: this.CONTROL_MAX_HEIGHT}} ></div>
             </div>
-            Sperregrense: <input type="range" min="0" max="12" value={this.state.bar * 100} onChange={this.barChangedHandler} /> {Math.round(this.state.bar * 100)}%<br />
-            Første delingstall: <input type="range" min="0" max="10" value={Math.round((this.state.divisor - 1) * 10)} onChange={this.divisorChangedHandler} /> {this.state.divisor}<br />
+            <div css={this.controlCss}>
+                <p css={this.pCss}>
+                    Sperregrense: {Math.round(this.state.bar * 100)}%<input type="range" min="0" max="12" value={this.state.bar * 100} onChange={this.barChangedHandler} />
+                </p>
+                <p css={this.pCss}>
+                    Første delingstall: {this.state.divisor} <input type="range" min="0" max="10" value={Math.round((this.state.divisor - 1) * 10)} onChange={this.divisorChangedHandler} />
+                </p>
+            </div>
         </div>
     }
 
@@ -83,7 +132,7 @@ class Democracy extends React.Component<IProps> {
             const indices: { [key: string]: number } = dataset.dimension.PolitParti.category.index
             let party = initParties.find(p => p.name === labels[key])
             if (party) return { ...party, index: indices[key], shadow: getShadow(party.color, 0x40) }
-            return { name: '', index: 0, votes: 0, mandates: 0, shortName: '', color: '', shadow: ''}
+            return { name: '', index: 0, votes: 0, mandates: 0, shortName: '', color: '', shadow: '' }
         })
         return parties
     }
@@ -131,13 +180,11 @@ class Democracy extends React.Component<IProps> {
         let testParties: { party: IParty, mandates: number }[] = []
         const testValid = (tp: any) => {
             if (tp.mandates - tp.party.mandates < 0) {
-                console.log(tp)
                 eligibleParties.splice(eligibleParties.indexOf(tp.party), 1)
                 validLevelling = false
             }
         }
         while (!validLevelling) {
-            console.log(eligibleParties, totalMandates)
             testParties = eligibleParties.map(ep => { return { party: ep, mandates: 0 } })
             totalMandates = eligibleParties.reduce((acc, curr) => acc + curr.mandates, regions.length)
             for (let i = totalMandates; i > 0; i--) {
@@ -178,7 +225,7 @@ class Democracy extends React.Component<IProps> {
 
 
 
-    
+
 }
 
 export default Democracy
@@ -233,15 +280,15 @@ const initParties = [
 ]
 
 const getShadow = (color: string, diff: number) => {
-    const r = getDarker(color.slice(1,3), diff)
-    const g = getDarker(color.slice(3,5), diff)
-    const b = getDarker(color.slice(5,7), diff)
+    const r = getDarker(color.slice(1, 3), diff)
+    const g = getDarker(color.slice(3, 5), diff)
+    const b = getDarker(color.slice(5, 7), diff)
     return "#" + r + g + b
 }
 
-const getDarker = (color: string, diff:number) => {
+const getDarker = (color: string, diff: number) => {
     let c = parseInt(color, 16) - diff
     if (c < 0) c = 0
     const t = c.toString(16)
-    return t.length < 2 ? '0' + t : t 
+    return t.length < 2 ? '0' + t : t
 }

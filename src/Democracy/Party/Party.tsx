@@ -34,7 +34,7 @@ interface IProps {
 // `
 const containerCss = css`
     height:100%;
-    padding 5px;
+    // padding 5px;
     margin: 5px;
     box-shadow: 0 0 2px 1px rgba(0,0,50,0.2);
     // border: 1px solid #888;
@@ -54,14 +54,14 @@ const pCss = css`
 `
 const dotBoxCss = css`
     width: 100%;
-    height: 80px;
+    height: 100%;
     display: flex;
     flex-flow: row;
     flex-wrap: wrap;
     justify-content: flex-start;
     align-content: flex-start;
     align-items:center;
-    flex-grow:8;
+    flex-grow:7;
     flex-basis:100%;
 `
 
