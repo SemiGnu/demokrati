@@ -74,7 +74,20 @@ class Democracy extends React.Component<IProps> {
         max-width:900px;
         bottom: 0;
     `
+    xCss = css`
+        margin: 0;
+        padding: 10px;
+        font-weight: 700;
+        width: 20px;
+    `
+    testCss = css`
+    display: flex;
+        margin: 0;
+        padding: 10px;
+        font-weight: 700;
+    `
     pCss = css`
+        width: auto;
         margin: 0;
         padding: 10px;
         font-weight: 700;
@@ -98,7 +111,6 @@ class Democracy extends React.Component<IProps> {
             background: #4ea0ed;
             cursor: pointer;
           }
-          
     `
 
     partiesCss = css`
@@ -108,10 +120,15 @@ class Democracy extends React.Component<IProps> {
         justify-content: space-between;
     `
 
-    toggleChanged = (index: number) => {
+    toggleChecked = (index: number) => {
         const newParties = [...this.state.parties]
         const party = newParties.find(p => p.index === index)
         if (party) party.checked = !party.checked
+        this.setState({parties: newParties}) 
+    }
+
+    uncheckAll = () => {
+        const newParties = this.state.parties.map(p => ({...p, checked: false}))
         this.setState({parties: newParties}) 
     }
 
@@ -119,7 +136,7 @@ class Democracy extends React.Component<IProps> {
 
     render() {
         const parties = this.state.parties.filter(p => p.mandates > 0).sort(this.partySort).map((p, i) =>
-            <Party key={i} party={p} clickHandler={() => this.toggleChanged(p.index)} />)
+            <Party key={i} party={p} clickHandler={() => this.toggleChecked(p.index)} />)
         let coalition = this.state.parties.filter(p => p.checked).sort(this.partySort).map(p => p.shortName).join(" + ")
         if (coalition.length > 0) {
             const totalCoalitionMandates = this.state.parties.filter(p => p.checked).reduce((acc, curr) => acc + curr.mandates, 0) 
@@ -133,9 +150,17 @@ class Democracy extends React.Component<IProps> {
                 <div style={{height: this.CONTROL_MAX_HEIGHT, width:'100%'}} ></div>
             </div>
             <div css={this.controlCss}>
-                {coalition.length > 0 ? <p css={this.pCss}>
-                    {coalition}
-                </p> : null}
+                {coalition.length > 0 ? <div css={css`
+                    display: flex;
+                    justify-content: space-between;
+                `}>
+                    <p css={this.testCss}>
+                        {coalition}
+                    </p>
+                    <p css={this.xCss} onClick={this.uncheckAll}>
+                        X
+                    </p>
+                </div> : null}
                 <p css={this.pCss}>
                     Sperregrense: {Math.round(this.state.bar * 100)}%<input type="range" min="0" max="12" value={this.state.bar * 100} onChange={this.barChangedHandler} />
                 </p>
