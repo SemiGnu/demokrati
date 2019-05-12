@@ -11,6 +11,7 @@ export interface IParty {
     name: string
     shortName: string
     color: string
+    shadow: string
     votes: number
     mandates: number
 }
@@ -59,17 +60,30 @@ class Democracy extends React.Component<IProps> {
     partiesCss = css`
         padding: 5px;
         display: flex;
-        flex-flow: row;
+        flex-flow: column;
         justify-content: space-between;
     `
+
+    render() {
+        const parties = this.state.parties.filter(p => p.mandates > 0).map((p, i) =>
+            <Party key={i} party={p} />)
+
+        return <div style={{backgroundColor: "#ebebeb"}}>
+            <div css={this.partiesCss} >
+                {parties}
+            </div>
+            Sperregrense: <input type="range" min="0" max="12" value={this.state.bar * 100} onChange={this.barChangedHandler} /> {Math.round(this.state.bar * 100)}%<br />
+            Første delingstall: <input type="range" min="0" max="10" value={Math.round((this.state.divisor - 1) * 10)} onChange={this.divisorChangedHandler} /> {this.state.divisor}<br />
+        </div>
+    }
 
     loadParties(): IParty[] {
         const parties = Object.keys(dataset.dimension.PolitParti.category.label).map(key => {
             const labels: { [key: string]: string } = dataset.dimension.PolitParti.category.label
             const indices: { [key: string]: number } = dataset.dimension.PolitParti.category.index
             let party = initParties.find(p => p.name === labels[key])
-            if (party) return { ...party, index: indices[key] }
-            return { name: '', index: 0, votes: 0, mandates: 0, shortName: '', color: '' }
+            if (party) return { ...party, index: indices[key], shadow: getShadow(party.color, 0x40) }
+            return { name: '', index: 0, votes: 0, mandates: 0, shortName: '', color: '', shadow: ''}
         })
         return parties
     }
@@ -164,18 +178,7 @@ class Democracy extends React.Component<IProps> {
 
 
 
-    render() {
-        const parties = this.state.parties.filter(p => p.mandates > 0).map((p, i) =>
-            <Party key={i} party={p} />)
-
-        return <div>
-            <div css={this.partiesCss} >
-                {parties}
-            </div>
-            Sperregrense: <input type="range" min="0" max="10" value={this.state.bar * 100} onChange={this.barChangedHandler} /> {Math.round(this.state.bar * 100)}%<br />
-            Første delingstall: <input type="range" min="0" max="10" value={Math.round((this.state.divisor - 1) * 10)} onChange={this.divisorChangedHandler} /> {this.state.divisor}<br />
-        </div>
-    }
+    
 }
 
 export default Democracy
@@ -203,17 +206,17 @@ const initRegions = [
 ]
 
 const initParties = [
-    { name: 'Arbeiderpartiet', shortName: 'AP', votes: 800947, mandates: 0, color: 'red' },
-    { name: 'Høyre', shortName: 'H', votes: 732895, mandates: 0, color: 'blue' },
-    { name: 'Fremskrittspartiet', shortName: 'FRP', votes: 444681, mandates: 0, color: 'navy' },
-    { name: 'Senterpartiet', shortName: 'SP', votes: 302017, mandates: 0, color: 'lime' },
-    { name: 'Sosialistisk Venstreparti', shortName: 'SV', votes: 176222, mandates: 0, color: 'magenta' },
-    { name: 'Venstre', shortName: 'V', votes: 127910, mandates: 0, color: 'darkgreen' },
-    { name: 'Kristelig Folkeparti', shortName: 'KRF', votes: 122797, mandates: 0, color: 'yellow' },
-    { name: 'Miljøpartiet De Grønne', shortName: 'MDG', votes: 94788, mandates: 0, color: 'green' },
-    { name: 'Rødt', shortName: 'R', votes: 70522, mandates: 0, color: 'darkred' },
-    { name: 'Pensjonistpartiet', shortName: 'PP', votes: 12855, mandates: 0, color: '#888' },
-    { name: 'Helsepartiet', shortName: 'HP', votes: 10337, mandates: 0, color: '#888' },
+    { name: 'Arbeiderpartiet', shortName: 'AP', votes: 800947, mandates: 0, color: '#c10f0f' },
+    { name: 'Høyre', shortName: 'H', votes: 732895, mandates: 0, color: '#1c74bc' },
+    { name: 'Fremskrittspartiet', shortName: 'FRP', votes: 444681, mandates: 0, color: '#0d4099' },
+    { name: 'Senterpartiet', shortName: 'SP', votes: 302017, mandates: 0, color: '#0c9e1b' },
+    { name: 'Sosialistisk Venstreparti', shortName: 'SV', votes: 176222, mandates: 0, color: '#ce0c46' },
+    { name: 'Venstre', shortName: 'V', votes: 127910, mandates: 0, color: '#04771b' },
+    { name: 'Kristelig Folkeparti', shortName: 'KRF', votes: 122797, mandates: 0, color: '#fce700' },
+    { name: 'Miljøpartiet De Grønne', shortName: 'MDG', votes: 94788, mandates: 0, color: '#1c9b06' },
+    { name: 'Rødt', shortName: 'R', votes: 70522, mandates: 0, color: '#870000' },
+    { name: 'Pensjonistpartiet', shortName: 'PP', votes: 12855, mandates: 0, color: '#64bbea' },
+    { name: 'Helsepartiet', shortName: 'HP', votes: 10337, mandates: 0, color: '#ff7d05' },
     { name: 'Partiet De Kristne', shortName: 'PDK', votes: 8700, mandates: 0, color: '#888' },
     { name: 'Liberalistene', shortName: 'L', votes: 5599, mandates: 0, color: '#888' },
     { name: 'Demokratene i Norge', shortName: 'DN', votes: 3830, mandates: 0, color: '#888' },
@@ -229,3 +232,16 @@ const initParties = [
     { name: 'Nordting', shortName: 'NT', votes: 59, mandates: 0, color: '#888' },
 ]
 
+const getShadow = (color: string, diff: number) => {
+    const r = getDarker(color.slice(1,3), diff)
+    const g = getDarker(color.slice(3,5), diff)
+    const b = getDarker(color.slice(5,7), diff)
+    return "#" + r + g + b
+}
+
+const getDarker = (color: string, diff:number) => {
+    let c = parseInt(color, 16) - diff
+    if (c < 0) c = 0
+    const t = c.toString(16)
+    return t.length < 2 ? '0' + t : t 
+}
