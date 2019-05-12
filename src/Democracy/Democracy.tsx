@@ -58,7 +58,7 @@ class Democracy extends React.Component<IProps> {
         }
     }
 
-    CONTROL_MAX_HEIGHT = "186x"
+    CONTROL_MAX_HEIGHT = "186px"
 
     containerCss = css`
         background-color: #ebebeb;
@@ -130,7 +130,7 @@ class Democracy extends React.Component<IProps> {
         return <div css={this.containerCss}>
             <div css={this.partiesCss} >
                 {parties}
-                <div style={{height: this.CONTROL_MAX_HEIGHT}} ></div>
+                <div style={{height: this.CONTROL_MAX_HEIGHT, width:'100%'}} ></div>
             </div>
             <div css={this.controlCss}>
                 {coalition.length > 0 ? <p css={this.pCss}>
