@@ -15,6 +15,7 @@ export interface IParty {
     votes: number
     mandates: number
     checked: boolean
+    leftness?: number
 }
 
 interface IRegion {
@@ -132,7 +133,11 @@ class Democracy extends React.Component<IProps> {
         this.setState({parties: newParties}) 
     }
 
-    partySort = (a: IParty, b: IParty) => a.index - b.index
+    partySort = (a: IParty, b: IParty) => {
+        if (!a.leftness) return 1
+        if (!b.leftness) return -1
+        return a.leftness - b.leftness
+    }
 
     render() {
         const parties = this.state.parties.filter(p => p.mandates > 0).sort(this.partySort).map((p, i) =>
@@ -298,15 +303,15 @@ const initRegions = [
 ]
 
 const initParties = [
-    { name: 'Arbeiderpartiet', shortName: 'AP', votes: 800947, mandates: 0, color: '#c10f0f' },
-    { name: 'Høyre', shortName: 'H', votes: 732895, mandates: 0, color: '#1c74bc' },
-    { name: 'Fremskrittspartiet', shortName: 'FRP', votes: 444681, mandates: 0, color: '#0d4099' },
-    { name: 'Senterpartiet', shortName: 'SP', votes: 302017, mandates: 0, color: '#0c9e1b' },
-    { name: 'Sosialistisk Venstreparti', shortName: 'SV', votes: 176222, mandates: 0, color: '#ce0c46' },
-    { name: 'Venstre', shortName: 'V', votes: 127910, mandates: 0, color: '#04771b' },
-    { name: 'Kristelig Folkeparti', shortName: 'KRF', votes: 122797, mandates: 0, color: '#fce700' },
+    { name: 'Arbeiderpartiet', shortName: 'AP', votes: 800947, mandates: 0, color: '#c10f0f', leftness: 70},
+    { name: 'Høyre', shortName: 'H', votes: 732895, mandates: 0, color: '#1c74bc', leftness: 10 },
+    { name: 'Fremskrittspartiet', shortName: 'FRP', votes: 444681, mandates: 0, color: '#0d4099', leftness: 1 },
+    { name: 'Senterpartiet', shortName: 'SP', votes: 302017, mandates: 0, color: '#0c9e1b', leftness: 60 },
+    { name: 'Sosialistisk Venstreparti', shortName: 'SV', votes: 176222, mandates: 0, color: '#ce0c46', leftness: 80 },
+    { name: 'Venstre', shortName: 'V', votes: 127910, mandates: 0, color: '#04771b', leftness: 20 },
+    { name: 'Kristelig Folkeparti', shortName: 'KRF', votes: 122797, mandates: 0, color: '#fce700', leftness: 30 },
     { name: 'Miljøpartiet De Grønne', shortName: 'MDG', votes: 94788, mandates: 0, color: '#1c9b06' },
-    { name: 'Rødt', shortName: 'R', votes: 70522, mandates: 0, color: '#870000' },
+    { name: 'Rødt', shortName: 'R', votes: 70522, mandates: 0, color: '#870000', leftness: 90 },
     { name: 'Pensjonistpartiet', shortName: 'PP', votes: 12855, mandates: 0, color: '#64bbea' },
     { name: 'Helsepartiet', shortName: 'HP', votes: 10337, mandates: 0, color: '#ff7d05' },
     { name: 'Partiet De Kristne', shortName: 'PDK', votes: 8700, mandates: 0, color: '#888' },
