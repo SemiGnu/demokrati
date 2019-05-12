@@ -14,6 +14,7 @@ export interface IParty {
     shadow: string
     votes: number
     mandates: number
+    checked: boolean
 }
 
 interface IRegion {
@@ -57,7 +58,7 @@ class Democracy extends React.Component<IProps> {
         }
     }
 
-    CONTROL_MAX_HEIGHT = "124px"
+    CONTROL_MAX_HEIGHT = "186x"
 
     containerCss = css`
         background-color: #ebebeb;
@@ -107,9 +108,24 @@ class Democracy extends React.Component<IProps> {
         justify-content: space-between;
     `
 
+    toggleChanged = (index: number) => {
+        const newParties = [...this.state.parties]
+        const party = newParties.find(p => p.index === index)
+        if (party) party.checked = !party.checked
+        this.setState({parties: newParties}) 
+    }
+
+    partySort = (a: IParty, b: IParty) => a.index - b.index
+
     render() {
-        const parties = this.state.parties.filter(p => p.mandates > 0).sort((a, b) => a.index - b.index).map((p, i) =>
-            <Party key={i} party={p} />)
+        const parties = this.state.parties.filter(p => p.mandates > 0).sort(this.partySort).map((p, i) =>
+            <Party key={i} party={p} clickHandler={() => this.toggleChanged(p.index)} />)
+        let coalition = this.state.parties.filter(p => p.checked).sort(this.partySort).map(p => p.shortName).join(" + ")
+        if (coalition.length > 0) {
+            const totalCoalitionMandates = this.state.parties.filter(p => p.checked).reduce((acc, curr) => acc + curr.mandates, 0) 
+            coalition += ": " + totalCoalitionMandates + "\t\t" + (totalCoalitionMandates > (169/2) ? "Flertall!" : "Ikke flertall")
+        }
+
 
         return <div css={this.containerCss}>
             <div css={this.partiesCss} >
@@ -117,6 +133,9 @@ class Democracy extends React.Component<IProps> {
                 <div style={{height: this.CONTROL_MAX_HEIGHT}} ></div>
             </div>
             <div css={this.controlCss}>
+                {coalition.length > 0 ? <p css={this.pCss}>
+                    {coalition}
+                </p> : null}
                 <p css={this.pCss}>
                     Sperregrense: {Math.round(this.state.bar * 100)}%<input type="range" min="0" max="12" value={this.state.bar * 100} onChange={this.barChangedHandler} />
                 </p>
@@ -132,8 +151,8 @@ class Democracy extends React.Component<IProps> {
             const labels: { [key: string]: string } = dataset.dimension.PolitParti.category.label
             const indices: { [key: string]: number } = dataset.dimension.PolitParti.category.index
             let party = initParties.find(p => p.name === labels[key])
-            if (party) return { ...party, index: indices[key], shadow: getShadow(party.color, 0x40) }
-            return { name: '', index: 0, votes: 0, mandates: 0, shortName: '', color: '', shadow: '' }
+            if (party) return { ...party, index: indices[key], shadow: getShadow(party.color, 0x40), checked: false }
+            return { name: '', index: 0, votes: 0, mandates: 0, shortName: '', color: '', shadow: '', checked: false }
         })
         return parties
     }
@@ -208,7 +227,7 @@ class Democracy extends React.Component<IProps> {
 
     barChangedHandler = (e: any) => {
         const newBar = e.target.value / 100
-        const newParties = this.loadParties()
+        const newParties = this.state.parties.map(p => ({...p, mandates: 0}))//this.loadParties()
         const newRegions = this.loadRegions(newParties)
         this.calculateDelegates(newRegions, this.state.divisor, newBar)
         this.calculateLevellingMandates(newRegions, newParties, this.state.divisor, newBar)
@@ -217,7 +236,7 @@ class Democracy extends React.Component<IProps> {
 
     divisorChangedHandler = (e: any) => {
         const newDivisor = e.target.value / 10 + 1
-        const newParties = this.loadParties()
+        const newParties = this.state.parties.map(p => ({...p, mandates: 0}))//this.loadParties()
         const newRegions = this.loadRegions(newParties)
         this.calculateDelegates(newRegions, newDivisor, this.state.bar)
         this.calculateLevellingMandates(newRegions, newParties, newDivisor, this.state.bar)

@@ -5,38 +5,15 @@ import {IParty} from './../Democracy'
 
 interface IProps {
     party: IParty
+    clickHandler: () => void
 }
 
-// const containerCss = css`
-//     width:100%;
-//     padding 5px;
-//     margin: 5px;
-//     box-shadow: 0 0 2px 1px rgba(0,0,50,0.2);
-//     // border: 1px solid #888;
-//     border-radius: 5px;
-//     display: flex;
-//     flex-direction: column;
-//     justify-content: space-between;
-//     align-items: center;
-// `
-// const pCss = css`
-//     font-weight: 700;
-//     text-align: center;
-// `
-// const dotBoxCss = css`
-//     width: 80px;
-//     height: 200px;
-//     display: flex;
-//     flex-wrap: wrap-reverse;
-//     justify-content: flex-start;
-//     align-content: flex-start;
-//     align-items:center;
-// `
+
+
 const containerCss = css`
     height:100%;
     // padding 5px;
     margin: 5px;
-    box-shadow: 0 0 2px 1px rgba(0,0,50,0.2);
     // border: 1px solid #888;
     border-radius: 5px;
     display: flex;
@@ -45,6 +22,14 @@ const containerCss = css`
     flex-base:100%;
     align-items: center;
     background-color: white;
+`
+const unCheckedContainerCss = css`
+    ${containerCss}
+    box-shadow: 0 0 2px 1px rgba(0,0,50,0.2);
+`
+const checkedContainerCss = css`
+    ${containerCss}
+    box-shadow: 0 0 3px 3px rgba(170,170,250,1);
 `
 const pCss = css`
     font-weight: 700;
@@ -66,7 +51,7 @@ const dotBoxCss = css`
 `
 
 const party: React.FC<IProps> = (props) => {
-    return <div css={containerCss}>
+    return <div css={props.party.checked ? checkedContainerCss : unCheckedContainerCss} onClick={props.clickHandler} >
         <p css={pCss} >{props.party.shortName}</p>
         <p css={pCss} >{props.party.mandates}</p>
         <div css={dotBoxCss} >{new Array(props.party.mandates).fill(null).map((dot, i) => <Dot color={props.party.color} shadow={props.party.shadow} key={i} /> )} </div>
@@ -93,3 +78,30 @@ const Dot: React.FC<IDotProps> = props => {
 
 
 export default party
+
+
+// const containerCss = css`
+//     width:100%;
+//     padding 5px;
+//     margin: 5px;
+//     box-shadow: 0 0 2px 1px rgba(0,0,50,0.2);
+//     // border: 1px solid #888;
+//     border-radius: 5px;
+//     display: flex;
+//     flex-direction: column;
+//     justify-content: space-between;
+//     align-items: center;
+// `
+// const pCss = css`
+//     font-weight: 700;
+//     text-align: center;
+// `
+// const dotBoxCss = css`
+//     width: 80px;
+//     height: 200px;
+//     display: flex;
+//     flex-wrap: wrap-reverse;
+//     justify-content: flex-start;
+//     align-content: flex-start;
+//     align-items:center;
+// `
