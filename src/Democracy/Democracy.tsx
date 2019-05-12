@@ -70,6 +70,7 @@ class Democracy extends React.Component<IProps> {
         position: fixed;
         background-color: #ebebeb;
         width: 100%;
+        max-width:900px;
         bottom: 0;
     `
     pCss = css`
